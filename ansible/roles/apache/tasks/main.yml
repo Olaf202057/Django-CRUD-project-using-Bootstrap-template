@@ -1,0 +1,103 @@
+---
+- name: Install repository
+  become: yes
+  apt_repository:
+    repo: 'ppa:ondrej/apache2'
+    state: present
+    update_cache: yes
+    mode: 0644
+
+- name: Install Apache packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apache2
+
+- name: Install mod-wsgi-py2 package
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - libapache2-mod-wsgi
+  when: python_bin is undefined or python_bin == 'python'
+
+- name: Install mod-wsgi-py3 package
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - libapache2-mod-wsgi-py3
+  when: python_bin is defined and python_bin == 'python3'
+
+- name: Creates SSL directory
+  become: yes
+  file:
+    path: /etc/apache2/ssl
+    state: directory
+  tags:
+     - ssl
+
+- name: Enable WSGI
+  become: yes
+  apache2_module:
+    name: wsgi
+    state: present
+
+- name: Enable Rewrite
+  become: yes
+  apache2_module:
+    name: rewrite
+    state: present
+
+- name: Enable SSL
+  become: yes
+  apache2_module:
+    name: ssl
+    state: present
+
+- name: Enable default site
+  become: yes
+  command: a2ensite 000-default
+  notify: reload apache
+  when: web_ssl is defined and web_ssl
+  tags:
+     - conf
+
+- name: Disable default site
+  become: yes
+  command: a2dissite 000-default
+  notify: reload apache
+  when: web_ssl is undefined or not web_ssl
+  tags:
+     - conf
+
+- name: Disable default SSL site
+  become: yes
+  command: a2dissite default-ssl
+  notify: reload apache
+  tags:
+     - conf
+
+- name: Apache user
+  become: yes
+  replace:
+    dest: /etc/apache2/envvars
+    regexp: '^export APACHE_RUN_USER=www-data$'
+    replace: 'export APACHE_RUN_USER={{ ansible_user }}'
+    backup: yes
+  notify: reload apache
+  tags:
+     - envvars
+
+- name: Ensure started
+  become: yes
+  service:
+    name: apache2
+    state: started

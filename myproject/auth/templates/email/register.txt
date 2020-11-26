@@ -1,0 +1,8 @@
+Hey!
+
+You've been successfully registered for {{ PROJECT_NAME }}! To login and get started, visit the link below.
+
+{{ site_url }}{{ login_url }}.
+
+Regards,
+The {{ PROJECT_NAME }} Team

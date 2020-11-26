@@ -1,0 +1,7 @@
+# robots.txt for http://www.myproject.com/
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /myapp
+Disallow: /myapp/
+Sitemap: http://www.myproject.com/sitemap.xml

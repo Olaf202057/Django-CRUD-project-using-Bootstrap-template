@@ -1,0 +1,2 @@
+[web]
+host.example.com ansible_user=ubuntu ip_address=1.2.3.4

@@ -1,0 +1,27 @@
+[run]
+branch = True
+omit =
+    .venv/**
+    conf/**
+    */admin.py
+    */apps.py
+    */tests/**
+    */migrations/**
+    myproject/common/sitemaps.py
+    myproject/common/cache/locmemkeys.py
+
+[report]
+fail_under = 90
+precision = 2
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self\.debug
+    if settings\.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+
+[html]
+title = My Project Coverage Report

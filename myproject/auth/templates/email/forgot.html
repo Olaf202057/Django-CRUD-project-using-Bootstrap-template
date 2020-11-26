@@ -1,0 +1,15 @@
+{% extends "email/base.html" %}
+
+{% block greeting %}We Reset Your Password!{% endblock %}
+
+{% block content %}
+    <tr>
+        <td style="padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+            So, you forgot your password, eh? It happens to the best of us. We went ahead
+            and reset it for you to <strong>{{ password }}</strong>. We recommend that you login promptly,
+            using your trusty new password, and <a href="{{ site_url }}{{ settings_url }}"
+                                                   target="_blank">click here</a> to
+            change your password.
+        </td>
+    </tr>
+{% endblock %}

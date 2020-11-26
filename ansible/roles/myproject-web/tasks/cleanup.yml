@@ -1,0 +1,10 @@
+- name: Delete "_previous" directory
+  file:
+    path: "{{ project_root }}/web_previous"
+    state: absent
+
+- name: Move current deployment into place for rollback (if needed)
+  command: "mv {{ project_root }}/web {{ project_root }}/web_previous"
+
+- name: Move staging into place
+  command: "mv {{ code_directory }} {{ project_root }}/web"

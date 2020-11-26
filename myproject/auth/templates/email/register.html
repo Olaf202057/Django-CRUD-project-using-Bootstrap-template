@@ -1,0 +1,12 @@
+{% extends "email/base.html" %}
+
+{% block greeting %}Hey!{% endblock %}
+
+{% block content %}
+    <tr>
+        <td style="padding: 20px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+            You've been successfully registered for {{ PROJECT_NAME }}! To login an get started,
+            <a href="{{ site_url }}{{ login_url }}" target="_blank">click here</a>.
+        </td>
+    </tr>
+{% endblock %}

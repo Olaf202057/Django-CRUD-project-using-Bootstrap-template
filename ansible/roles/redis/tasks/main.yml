@@ -1,0 +1,61 @@
+---
+- name: Install Dependencies
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+  - make
+  - gcc
+  - wget
+
+- name: Download source
+  shell: wget -O - http://download.redis.io/releases/redis-3.2.6.tar.gz | tar -xz -C /tmp
+  args:
+    creates: /tmp/redis-3.2.6
+
+- name: Install
+  shell: make
+  args:
+    chdir: /tmp/redis-3.2.6
+    creates: /tmp/redis-3.2.6/src/redis-server
+
+- name: Compile binaries
+  become: yes
+  shell: cp -f {{item}} /usr/local/bin
+  args:
+    chdir: /tmp/redis-3.2.6/src
+  with_items:
+  - redis-cli
+  - redis-server
+  - redis-benchmark
+
+- name: Configure
+  become: yes
+  template:
+    src: redis.conf.j2
+    dest: /etc/redis.conf
+  notify: restart redis-server
+  tags:
+    - conf
+
+- name: Create service
+  become: yes
+  template:
+    src: redis_init_script.j2
+    dest: /etc/init.d/redis-server
+    mode: 755
+  tags:
+    - conf
+
+- name: Enable service
+  become: yes
+  shell: systemctl enable redis-server.service
+
+- name: Ensure started
+  become: yes
+  service:
+    name: redis-server
+    state: started
+    enabled: yes

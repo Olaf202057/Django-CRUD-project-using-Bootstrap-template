@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ PROJECT_NAME }} | Forgot Password{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <div class="container">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <div class="login-container">
+                            <div class="well">
+                                <h4 class="header blue lighter bigger">
+                                    <i class="fa fa-key"></i>
+                                    Retrieve Password
+                                </h4>
+
+                                <div class="space-6"></div>
+
+                                {% include 'snippets/status.html' %}
+
+                                <p>
+                                    Enter the email associated with your account. We'll reset your password and send the
+                                    temporary password to your email address.
+                                </p>
+
+                                <form class="form" action="{% url 'forgot' %}" method="post">{% csrf_token %}
+                                    <div class="form-group">
+                                        <div class="input-group margin-bottom-sm">
+                                            <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
+                                            <input class="form-control" type="text" name="email" id="id_email"
+                                                   placeholder="Email">
+                                        </div>
+                                    </div>
+
+                                    <div class="clearfix">
+                                        <a href="{% url 'register' %}">
+                                            Need an account?
+                                        </a>
+                                        <button type="submit"
+                                                class="width-35 pull-right btn btn-sm btn-primary">
+                                            Get It <i class="fa fa-unlock-alt icon-on-right"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_footer %}
+    <script type="text/javascript">
+        $("#id_email").focus();
+    </script>
+{% endblock %}

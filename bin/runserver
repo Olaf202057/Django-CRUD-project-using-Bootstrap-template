@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MYPROJECT_VENV=${PROJECT_VENV:=${DIR}/../.venv}
+
+make install migrate -C ${DIR}/..
+
+source ${MYPROJECT_VENV}/bin/activate
+
+python ${DIR}/../manage.py runserver

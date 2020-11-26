@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ PROJECT_NAME }} | Login{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <div class="container">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <div class="login-container">
+                            <div class="well">
+                                <h4 class="header blue lighter bigger">
+                                    <i class="fa fa-key"></i>
+                                    Enter Your Login Information
+                                </h4>
+
+                                <div class="space-6"></div>
+
+                                {% include 'snippets/status.html' %}
+
+                                <form class="form" action="{{ request.get_full_path }}" method="post">{% csrf_token %}
+                                    <div class="form-group">
+                                        <div class="input-group margin-bottom-sm">
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+
+                                            {% render_field form.username class+="form-control" %}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+
+                                            {% render_field form.password class+="form-control" %}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="inline">
+                                            <input type="checkbox" name="remember-me" id="remember-me"
+                                                   class="ace"/>
+                                            <span class="lbl"> Stay signed in</span>
+                                        </label>
+
+                                        <button type="submit"
+                                                class="width-35 pull-right btn btn-sm btn-primary">
+                                            Sign In <i class="fa fa-sign-in icon-on-right"></i>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div class="clearfix">
+                                    <a href="{% url 'register' %}">
+                                        Need an account?
+                                    </a>
+                                    <a href="{% url 'forgot' %}" class="pull-right">
+                                        Forgot your password?
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_footer %}
+    <script type="text/javascript">
+        $("#id_username").focus();
+    </script>
+{% endblock %}

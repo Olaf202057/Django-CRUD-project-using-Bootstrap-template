@@ -1,0 +1,26 @@
+---
+- name: Install repository
+  become: yes
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    update_cache: yes
+    mode: 0644
+  with_items:
+    - "deb https://deb.nodesource.com/node_9.x {{ ansible_distribution_release }} main"
+    - "deb-src https://deb.nodesource.com/node_9.x {{ ansible_distribution_release }} main"
+
+- name: Install Node repository key
+  become: yes
+  apt_key:
+    url: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
+    state: present
+
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - nodejs

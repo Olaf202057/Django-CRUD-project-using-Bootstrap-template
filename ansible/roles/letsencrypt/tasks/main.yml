@@ -1,0 +1,24 @@
+---
+- name: Install repository
+  become: yes
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+    state: present
+    update_cache: yes
+    mode: 0644
+
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - python-certbot-apache
+  when: web_ssl
+
+- name: Install SSL
+  become: yes
+  shell: certbot --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start" --non-interactive --agree-tos --email {{ project_contact_email }} --domains {{ host }},www.{{ host }}
+  notify: reload apache
+  when: web_ssl

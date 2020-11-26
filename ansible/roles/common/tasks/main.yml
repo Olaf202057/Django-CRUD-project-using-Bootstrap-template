@@ -1,0 +1,52 @@
+---
+- name: Install the basics
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - vim
+    - ssh
+    - htop
+    - bash-completion
+
+- name: Configure vim
+  become: yes
+  alternatives:
+    name: editor
+    path: /usr/bin/vim.basic
+
+- name: Environment variables
+  become: yes
+  lineinfile:
+    dest: /etc/environment
+    line: "{{ item.key }}=\"{{ item.value }}\""
+    regexp: "{{ item.key }}="
+  with_dict: "{{ env_vars }}"
+  tags:
+     - envvars
+
+- name: Setup SSH config dir
+  become: yes
+  become_user: "{{ ansible_env.HOME|basename }}"
+  file:
+    path: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+
+- name: Setup log folder
+  become: yes
+  file:
+    path: /var/log/{{ project_id }}
+    state: directory
+    mode: "2777"
+    owner: "{{ ansible_user }}"
+    group: www-data
+
+- name: Setup project root
+  become: yes
+  file:
+    path: "{{ project_root }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"

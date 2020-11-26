@@ -1,0 +1,48 @@
+- name: Check if letsencrypt certs already installed
+  become: yes
+  stat:
+    path: "/etc/letsencrypt/live/{{ web_host }}"
+  register: letsencrypt_certs_exist
+
+- name: Setup Python/Django Apache conf
+  template:
+    src: "../../apache/templates/python.django.conf"
+    dest: "/etc/apache2/sites-available/{{ project_id }}-web.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: yes
+  vars:
+    url: "{{ web_host }}"
+    alias_urls: "{{ web_host_alias }}"
+    srv_dir: "{{ web_root }}"
+    env: "{{ web_env_vars }}"
+    ssl_exists: "{{ letsencrypt_certs_exist.stat.exists }}"
+  notify: reload apache
+  tags:
+     - conf
+
+- name: Enable site conf
+  become: yes
+  command: "a2ensite {{ project_id }}-web"
+  notify: reload apache
+
+- name: Apache environment variables
+  become: yes
+  lineinfile:
+    dest: /etc/apache2/envvars
+    line: "export {{ item.key }}=\"{{ item.value }}\""
+    regexp: "export {{ item.key }}="
+  with_dict: "{{ env_vars }}"
+  notify: reload apache
+  tags:
+     - envvars
+
+- name: Generate SSL
+  include_role:
+    name: letsencrypt
+  vars:
+    host: "{{ web_host }}"
+  when: web_ssl
+  tags:
+    - ssl

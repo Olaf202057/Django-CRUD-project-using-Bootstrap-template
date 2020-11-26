@@ -1,0 +1,9 @@
+ansibleCopyrightNameVar: project_developer
+ansibleRelativeDir: ansible
+gitProject: https://github.com/alexdlaird
+hostProvisionCommand: sudo apt-get update && sudo apt-get install -y python && sudo
+  apt-get -y autoremove
+projects: [django-bootstrap-authentication-template-project]
+projectsRelativeDir: .
+serverBinFilename: bin/runserver
+versionInfo: {path: conf/configs/common.py, project: .}

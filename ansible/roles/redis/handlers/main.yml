@@ -1,0 +1,4 @@
+---
+- name: restart redis-server
+  become: yes
+  shell: /etc/init.d/redis-server stop && /etc/init.d/redis-server start

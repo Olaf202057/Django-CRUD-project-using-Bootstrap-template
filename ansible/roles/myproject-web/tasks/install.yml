@@ -1,0 +1,21 @@
+---
+- name: Install
+  become: yes
+  make:
+    chdir: "{{ code_directory }}"
+    target: install
+
+- name: Test
+  make:
+    chdir: "{{ code_directory }}"
+    target: test
+
+- name: Build
+  make:
+    chdir: "{{ code_directory }}"
+    target: build
+
+- name: Migrate
+  make:
+    chdir: "{{ code_directory }}"
+    target: migrate

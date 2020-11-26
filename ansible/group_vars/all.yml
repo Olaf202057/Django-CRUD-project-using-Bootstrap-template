@@ -1,0 +1,35 @@
+---
+project_id: "myproject"
+
+project_root: "/srv/{{ project_id }}"
+
+project_developer: "Alex Laird"
+project_name: "My Project"
+
+project_contact_email: "contact@alexlaird.com"
+project_admin_email: "{{ project_contact_email }}"
+
+web_root: "{{ project_root }}/web"
+
+web_venv: "/usr/local/venvs/{{ project_id }}_web"
+
+myproject_db_name: "myproject_{{ domain_environment }}"
+
+default_env_vars:
+  ENVIRONMENT: "{{ domain_environment }}"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+  PYTHON_BIN: "{{ python_bin | default('python') }}"
+  MYPROJECT_DEVELOPER: "{{ project_developer }}"
+  MYPROJECT_ID: "{{ project_id }}"
+  MYPROJECT_NAME: "{{ project_name }}"
+  MYPROJECT_ADMIN_EMAIL: "{{ project_admin_email }}"
+  MYPROJECT_CONTACT_EMAIL: "{{ project_contact_email }}"
+  MYPROJECT_HOST: "{{ web_host_protocol }}{{ web_host }}"
+  MYPROJECT_VENV: "{{ web_venv }}"
+  MYPROJECT_HOME_DIR: "{{ web_root }}"
+  MYPROJECT_ALLOWED_HOSTS: "{{ web_host }} {{ web_host_alias }} {{ ip_address }}"
+  MYPROJECT_DB_NAME: "{{ myproject_db_name }}"
+  MYPROJECT_DB_HOST: "{{ myproject_db_host }}"
+  MYPROJECT_EMAIL_HOST: "email-smtp.us-east-1.amazonaws.com"
+  MYPROJECT_EMAIL_PORT: 587

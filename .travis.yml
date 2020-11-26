@@ -1,0 +1,16 @@
+language: python
+python:
+- '2.7'
+- '3.5'
+- '3.6'
+install:
+ - python -m pip install virtualenv
+ - python -m virtualenv .venv
+ - source .venv/bin/activate
+ - easy_install distribute
+ - python -m pip install -r requirements.txt
+script:
+- make install test
+after_success:
+- source .venv/bin/activate
+- codecov

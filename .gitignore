@@ -1,0 +1,13 @@
+.DS_Store
+*.pyc
+.idea/
+*.iml
+*.retry
+/static
+db.sqlite3
+db.sqlite3-journal
+.coverage
+*.log
+.env
+htmlcov
+.venv

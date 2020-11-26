@@ -1,0 +1,70 @@
+---
+- name: Install repository
+  become: yes
+  apt_repository:
+    repo: 'ppa:ondrej/mysql-5.7'
+    state: present
+    update_cache: yes
+    mode: 0644
+
+- name: Install packages
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - mysql-server-5.7
+    - mysql-client-5.7
+    - python-mysqldb
+    - libmysqlclient-dev
+
+- name: Configure bind address
+  become: yes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: "bind-address = {{ mysql_bind_address | default('0.0.0.0') }}"
+    regexp: "bind-address"
+  notify: restart mysql
+  tags:
+    - conf
+
+- name: Add charset defaults
+  become: yes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: "character-set-server=utf8"
+    regexp: "character-set-server="
+  notify: restart mysql
+  tags:
+    - conf
+
+- name: Add collation defaults
+  become: yes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: "collation-server=utf8_general_ci"
+    regexp: "collation-server="
+  notify: restart mysql
+  tags:
+    - conf
+
+- name: Configure users
+  become: yes
+  mysql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv | default('*.*:ALL') }}"
+    host: "{{ item.host | default('localhost') }}"
+    state: present
+  with_items:
+    - { name: "{{ myproject_db_user }}", password: "{{ myproject_db_password }}", host: "%" }
+  tags:
+    - envvars
+
+- name: Ensure started
+  become: yes
+  service:
+    name: mysql
+    enabled: yes
+    state: started

@@ -1,0 +1,24 @@
+---
+- name: Ensure staging directory doesn't exist
+  file:
+    path: "{{ code_directory }}"
+    state: absent
+
+- name: Download artifact
+  get_url:
+    url: "https://github.com/alexdlaird/django-bootstrap-authentication-template-project/archive/{{ build_version | default('master') }}.tar.gz"
+    dest: "{{ project_root }}/{{ build_version | default('master') }}.tar.gz"
+
+- name: Extract artifact to staging directory
+  unarchive:
+    src: "{{ project_root }}/{{ build_version | default('master') }}.tar.gz"
+    dest: "{{ project_root }}"
+    remote_src: yes
+
+- name: Move extracted to staging directory
+  command: "mv {{ project_root }}/django-bootstrap-authentication-template-project-{{ build_version | default('master') }} {{ code_directory }}"
+
+- name: Delete artifact
+  file:
+    path: "{{ project_root }}/{{ build_version | default('master') }}.tar.gz"
+    state: absent

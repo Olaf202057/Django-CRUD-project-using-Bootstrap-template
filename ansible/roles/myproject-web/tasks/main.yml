@@ -1,0 +1,83 @@
+---
+- name: Install dependencies
+  become: yes
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - python-mysqldb
+    - libmysqlclient-dev
+
+- name: Install yuglify
+  become: yes
+  npm:
+    global: yes
+    name: yuglify
+
+- name: Create database
+  become: yes
+  mysql_db:
+    name: "{{ myproject_db_name }}"
+    state: present
+    login_host: "{{ myproject_db_host }}"
+    login_user: "{{ myproject_db_user }}"
+    login_password: "{{ myproject_db_password }}"
+    encoding: utf8
+    collation: utf8_general_ci
+
+- name: Create directory
+  file:
+    path: "{{ project_root }}/web"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Set code directory
+  set_fact:
+    code_directory: "{{ project_root }}/web_stage"
+  tags:
+    - code
+    - migrate
+
+- name: Set code directory (devbox only)
+  set_fact:
+    code_directory: "{{ project_root }}/web"
+  tags:
+    - code
+    - migrate
+  when: domain_environment == "devbox"
+
+- import_tasks: download.yml
+  when: download_code is undefined or download_code
+  tags:
+    - code
+    - migrate
+
+- import_tasks: install.yml
+  tags:
+    - code
+    - migrate
+
+- import_tasks: cleanup.yml
+  when: download_code is undefined or download_code
+  tags:
+    - code
+
+- import_tasks: server.yml
+  when: web_node is undefined or web_node
+  tags:
+    - ssl
+    - conf
+    - envvars
+
+- name: Ensure Apache is reloaded
+  become: yes
+  service:
+    name: apache2
+    state: reloaded
+  when: web_node is undefined or web_node
+  tags:
+    - code
+    - conf
+    - envvars

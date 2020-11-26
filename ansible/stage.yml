@@ -1,0 +1,14 @@
+---
+- name: Stage Setup
+  hosts: web
+  roles:
+    # Server setup
+    - { role: common }
+
+    # Infrastructure
+    - { role: mysql }
+    - { role: redis }
+
+    # Projects
+    - { role: myproject-web }
+  environment: "{{ env_vars }}"
